@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Galaxy</title>
+    <style>
+        :root {
+            --f: 1;
+            --d: 0
+        }
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            height: 1000vh
+        }
+        body {
+            margin: 0;
+        }
+        .svg-main {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #232323;
+        }
+        .star-rotate {
+            transform: rotate(calc(var(--d, 0) * var(--t, 1) * 1deg));
+            transform-origin: var(--cx, 0) var(--cy, 0);
+            /*animation: star-traslation calc(var(--t, 20s) * var(--f, 1)) linear forwards infinite*/
+        }
+        .dahs-rotate {
+            transform: rotate(calc(var(--d, 0deg) * var(--t, 1)));
+            transform-origin: var(--cx, 0) var(--cy, 0);
+            d: path('M ' var(--cx) var(--cy) 'A ' var(--r) var(--r) ' 0 1 0 ')
+        }
+        @keyframes star-traslation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" id="svg-main" class="svg-main">
+        
+    </svg>
+    <script>
+        const STAR_COUNT = 200
+        const STAR_RADIUS_LIMIT = 2
+        const MIN_FACTOR = 0.1
+
+        const svgMain = document.getElementById('svg-main')
+        const svgMainRect = svgMain.getBoundingClientRect()
+        const svgCx = svgMainRect.width / 2
+        const svgCy = svgMainRect.height / 2
+
+        svgMain.innerHTML = [...Array(STAR_COUNT).keys()].map(i => {
+            const cx = Math.random() * svgMainRect.width 
+            const cy = Math.random() * svgMainRect.height
+            const timing = 0.2 + Math.random() * 0.5
+            const result = 
+            `
+                <circle
+                    id="star-${i}"
+                    class="star-rotate"
+                    cx="${cx}" 
+                    cy="${cy}" 
+                    r="${Math.random() * STAR_RADIUS_LIMIT}" 
+                    stroke="white" 
+                    stroke-width="1" 
+                    fill="white"
+                    style="--cx:${svgCx};--cy:${svgCy};--t:${timing}"
+                />
+            `
+            return result
+        }).join()
+
+        /*
+        svgMain.innerHTML = [...Array(STAR_COUNT).keys()].map(i => {
+            const x = Math.random() * svgMainRect.width 
+            const y = Math.random() * svgMainRect.height
+            const r = Math.sqrt((cx-x)**2 + (cy-y)**2)
+            const timing = 0.2 + Math.random() * 0.5
+            const result = 
+            `
+                <path
+                    id="star-${i}"
+                    class="dash-rotate"
+                    stroke="white" 
+                    stroke-width="${Math.random() * STAR_RADIUS_LIMIT}" 
+                    fill="white"
+                    style="--cx:${svgCx};--cy:${svgCy};--x:${x};--y:${y};--r:${r}--t:${timing}"
+                />
+            `
+            return result
+        }).join()
+        */
+        
+        let f = MIN_FACTOR + window.scrollY * 2 / document.documentElement.scrollHeight
+        let d = 0;
+        function acelerate() {
+            f = MIN_FACTOR + window.scrollY * 2 / document.documentElement.scrollHeight
+            d += f
+            document.documentElement.style.setProperty('--d', d)
+            document.documentElement.style.setProperty('--f', f)
+            setTimeout(acelerate, 10)
+        }
+
+        acelerate()
+    </script>
+</body>
+</html>
